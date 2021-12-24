@@ -9,7 +9,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 import static org.openqa.selenium.Keys.BACK_SPACE;
 
@@ -21,8 +21,9 @@ public class CardTest {
 
         RegistrationByCardInfo firstAttempt = DataGenerator.Registration.generateByCard("ru");
 
-        String firstDate = firstAttempt.getCardExpire().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        String firstDate = generateDate(27);
         String secondDate = generateDate(35);
+
 
         // firstAttempt
 
@@ -55,9 +56,8 @@ public class CardTest {
         $("[data-test-id='agreement']").click();
         $$(".button__text").find(exactText("Запланировать")).click();
 
-        // $(".notification__content").shouldHave(exactText("Встреча успешно запланирована на " + secondDate), Duration.ofSeconds(15));
-
-        $(".notification__content").shouldHave(exactText("Необходимо подтверждение У вас уже запланирована встреча на другую дату. Перепланировать?"), Duration.ofSeconds(15));
+        $("[data-test-id='replan-notification'] .notification__content")
+                .shouldBe(visible).shouldHave(text("У вас уже запланирована встреча на другую дату. Перепланировать?"));
     }
 
     public static String generateDate(int days) {
