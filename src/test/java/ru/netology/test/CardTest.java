@@ -58,6 +58,10 @@ public class CardTest {
 
         $("[data-test-id='replan-notification'] .notification__content")
                 .shouldBe(visible).shouldHave(text("У вас уже запланирована встреча на другую дату. Перепланировать?"));
+
+        $$(".button__text").find(exactText("Перепланировать")).click();
+
+        $(".notification__content").shouldHave(exactText("Встреча успешно запланирована на " + secondDate), Duration.ofSeconds(15));
     }
 
     public static String generateDate(int days) {
