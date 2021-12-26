@@ -1,13 +1,10 @@
 package ru.netology.test;
 
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Keys;
-import ru.netology.domain.DataGenerator;
-import ru.netology.domain.RegistrationByCardInfo;
+import ru.netology.data.DataGenerator;
+import ru.netology.data.RegistrationByCardInfo;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
@@ -21,8 +18,8 @@ public class CardTest {
 
         RegistrationByCardInfo firstAttempt = DataGenerator.Registration.generateByCard("ru");
 
-        String firstDate = generateDate(27);
-        String secondDate = generateDate(35);
+        String firstDate = DataGenerator.generateDate(27);
+        String secondDate = DataGenerator.generateDate(35);
 
 
         // firstAttempt
@@ -35,25 +32,14 @@ public class CardTest {
         $("[data-test-id='agreement']").click();
         $$(".button__text").find(exactText("Запланировать")).click();
 
-        $(".notification__content").shouldHave(exactText("Встреча успешно запланирована на " + firstDate), Duration.ofSeconds(15));
+        $(".notification__content")
+                .shouldBe(visible).shouldHave(exactText("Встреча успешно запланирована на " + firstDate), Duration.ofSeconds(15));
 
 
         // secondAttempt
 
-        $("[placeholder='Город']").sendKeys(Keys.CONTROL + "a");
-        $("[placeholder='Город']").sendKeys(Keys.DELETE);
         $("[placeholder='Дата встречи']").doubleClick().sendKeys(BACK_SPACE);
-        $("[name='name']").sendKeys(Keys.CONTROL + "a");
-        $("[name='name']").sendKeys(Keys.DELETE);
-        $("[name='phone']").sendKeys(Keys.CONTROL + "a");
-        $("[name='phone']").sendKeys(Keys.DELETE);
-        $("[data-test-id='agreement']").click();
-
-        $("[placeholder='Город']").setValue(firstAttempt.getCity());
         $("[data-test-id='date'] input").setValue(secondDate);
-        $("[name='name']").setValue(firstAttempt.getName());
-        $("[name='phone']").setValue(firstAttempt.getPhone());
-        $("[data-test-id='agreement']").click();
         $$(".button__text").find(exactText("Запланировать")).click();
 
         $("[data-test-id='replan-notification'] .notification__content")
@@ -61,10 +47,7 @@ public class CardTest {
 
         $$(".button__text").find(exactText("Перепланировать")).click();
 
-        $(".notification__content").shouldHave(exactText("Встреча успешно запланирована на " + secondDate), Duration.ofSeconds(15));
-    }
-
-    public static String generateDate(int days) {
-        return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        $(".notification__content")
+                .shouldBe(visible).shouldHave(exactText("Встреча успешно запланирована на " + secondDate), Duration.ofSeconds(15));
     }
 }
